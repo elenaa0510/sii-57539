@@ -9,12 +9,17 @@
 Material docente de la asignatura **Sistemas Informáticos Industriales** de la **Escuela Técnica Superior de Ingeniería y Diseño Industrial (ETSIDI)** de la **Universidad Politécnica de Madrid (UPM)**.
 
 ---
-
+##Autor del repositorio:
+**Elena Madera Gómez**
 ## 📖 Descripción
 
 Este repositorio contiene el material utilizado en las prácticas de la asignatura **Sistemas Informáticos Industriales**, incluyendo los guiones y el código de inicio.
 
 El objetivo de la asignatura es introducir en el desarrollo de aplicaciones para sistemas informáticos industriales, haciendo especial énfasis en el uso del lenguaje C y del sistema operativo Linux.
+
+En este laboratorio se va a realizar el desarrollo del juego de tenis con dos jugadores en los que se implementará diferentes funcionalidades a lo largo del desarrollo de las práticas. 
+
+En esta primera práctica se incluirán los movimiento para la raqueta. 
 
 ---
 
