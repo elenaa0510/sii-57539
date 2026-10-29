@@ -17,12 +17,15 @@
 
 CMundo::CMundo()
 {
+      fifo_fd = -1;
 	Init();
 }
 
 CMundo::~CMundo()
 {
-
+  if(fifo_fd != -1){
+    close(fifo_fd);
+  }
 }
 
 void CMundo::InitGL()
@@ -137,12 +140,19 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.y=2+2*rand()/(float)RAND_MAX;
 		puntos2++;
 		//enviar mensaje al logger
-		int fd = open("fifo_tenis", O_WRONLY);
-		if (fd != -1){
+		
+		if (fifo_fd != -1){
 		  char mensaje[100];
 		  sprintf(mensaje, "Gol! Punto para Jugador 2. Marcador -> J1: %d | J2: %d\n", puntos1, puntos2);
-		  write(fd, mensaje, strlen(mensaje));
-		  close(fd);
+		  write(fifo_fd, mensaje, strlen(mensaje));
+		 
+		}
+		if(puntos1 >= 3 || puntos2 >= 3){
+		  if(fifo_fd != -1){
+		     close(fifo_fd);
+		    fifo_fd = -1;
+		 }
+		 exit(0);
 		}
 	}
 
@@ -154,13 +164,19 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.y=-2-2*rand()/(float)RAND_MAX;
 		puntos1++;
 		//enviar mensaje al logger
-		int fd = open("fifo_tenis", O_WRONLY);
-		if (fd != -1){
+		if (fifo_fd != -1){
 		  char mensaje[100];
 		  sprintf(mensaje, "Gol! Punto para Jugador 1. Marcador -> J1: %d | J2: %d\n", puntos1, puntos2);
-		  write(fd, mensaje, strlen(mensaje));
-		  close(fd);
+		  write(fifo_fd, mensaje, strlen(mensaje));
 		}
+		if(puntos1 >= 3 || puntos2 >= 3){
+                  if(fifo_fd != -1){
+                     close(fifo_fd);
+                    fifo_fd = -1;
+                 }
+                 exit(0);
+                }
+
 	}
 
 }
@@ -181,6 +197,8 @@ void CMundo::OnKeyboardDown(unsigned char key, int x, int y)
 
 void CMundo::Init()
 {
+  fifo_fd = open("fifo_tenis", O_WRONLY);
+  
 	Plano p;
 //pared inferior
 	p.x1=-7;p.y1=-5;
