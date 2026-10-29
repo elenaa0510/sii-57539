@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <math.h>
-
+#include <string.h>
 int main(int argc, char **argv) {
     int fd;
     char buffer[1024];
@@ -27,12 +27,23 @@ int main(int argc, char **argv) {
          return(1);
      }
      /* Leer de la FIFO */
+     int partida_terminada = 0;
      while (read(fd, buffer, sizeof(buffer) - 1) > 0) {
          // X5: Imprimir el texto en la pantalla
          printf("%s", buffer);
+	
+	 if(strstr(buffer, "J1: 3") != NULL || strstr(buffer, "J2: 3") != NULL){
+	   partida_terminada = 1;
+	 }
      }
      close(fd);
+    
+    if(partida_terminada){
+     printf("Fin de la partida. Cerrando logger.\n");
+     unlink("fifo_tenis");
+     break;
     }
-    unlink("fifo_tenis");
-    return(0);
+   }
+unlink("fifo_tenis");
+return(0);
 }
