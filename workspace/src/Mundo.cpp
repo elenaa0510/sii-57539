@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
+#include <fcntl.h>
+#include <unistd.h>
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -135,6 +136,14 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=2+2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=2+2*rand()/(float)RAND_MAX;
 		puntos2++;
+		//enviar mensaje al logger
+		int fd = open("fifo_tenis", O_WRONLY);
+		if (fd != -1){
+		  char mensaje[100];
+		  sprintf(mensaje, "Gol! Punto para Jugador 2. Marcador -> J1: %d | J2: %d\n", puntos1, puntos2);
+		  write(fd, mensaje, strlen(mensaje));
+		  close(fd);
+		}
 	}
 
 	if(fondo_dcho.Rebota(esfera))
@@ -144,6 +153,14 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=-2-2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=-2-2*rand()/(float)RAND_MAX;
 		puntos1++;
+		//enviar mensaje al logger
+		int fd = open("fifo_tenis", O_WRONLY);
+		if (fd != -1){
+		  char mensaje[100];
+		  sprintf(mensaje, "Gol! Punto para Jugador 1. Marcador -> J1: %d | J2: %d\n", puntos1, puntos2);
+		  write(fd, mensaje, strlen(mensaje));
+		  close(fd);
+		}
 	}
 
 }

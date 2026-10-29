@@ -14,3 +14,6 @@ SET(COMMON_SRCS
 ADD_EXECUTABLE(tenis src/tenis.cpp ${COMMON_SRCS})
 
 TARGET_LINK_LIBRARIES(tenis glut GL GLU)
+
+#añado el ejecutable del logger de la practica 2
+ADD_EXECUTABLE(logger src/logger.cpp)
