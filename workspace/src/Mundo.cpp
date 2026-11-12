@@ -11,6 +11,11 @@
 #include <math.h>
 #include <fcntl.h>
 #include <unistd.h>
+//incluir librerias para mmap
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -119,10 +124,21 @@ void CMundo::OnDraw()
 
 void CMundo::OnTimer(int value)
 {	
+	datMem->esfera = esfera;
+	datMem->raqueta1 = jugador1;
 	jugador1.Mueve(0.025f);
 	jugador2.Mueve(0.025f);
 	esfera.Mueve(0.025f);
 	int i;
+	if(datMem->accion == 1){
+	  jugador1.velocidad.y=4; 
+	} else if (datMem->accion == -1) {
+    	// Acción para mover hacia abajo
+    	   jugador1.velocidad.y=-4;
+	}
+	else{
+	  jugador1.velocidad.y=0;
+	}
 	for(i=0;i<paredes.size();i++)
 	{
 		paredes[i].Rebota(esfera);
@@ -198,7 +214,25 @@ void CMundo::OnKeyboardDown(unsigned char key, int x, int y)
 void CMundo::Init()
 {
   fifo_fd = open("fifo_tenis", O_WRONLY);
-  
+  int fd_mem;
+  char *direccion;
+  fd_mem = open("/tmp/memoria_tenis", O_CREAT | O_RDWR, 0666);
+  if(fd_mem ==-1){
+     perror("error al crear el fichero para la memoria compartida");
+     exit(1);
+  }
+ if (ftruncate(fd_mem, sizeof(DatosMemCompartida)) == -1) {
+    perror("Error en ftruncate");
+    exit(1);
+ }  
+ direccion =(char*) mmap(NULL, sizeof(DatosMemCompartida), PROT_READ|PROT_WRITE, MAP_SHARED, fd_mem, 0);
+ if (direccion == MAP_FAILED){
+   perror("error en mmap en tenis");
+   exit(1);
+ }
+
+ close(fd_mem);
+ datMem = (DatosMemCompartida *) direccion;
 	Plano p;
 //pared inferior
 	p.x1=-7;p.y1=-5;
